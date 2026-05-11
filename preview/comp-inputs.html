@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { background: var(--paper); }
+  .field { font-family:var(--font-sans); width:100%; padding:14px 18px; background: rgba(255,255,255,0.7); border:1.5px solid rgba(75,46,92,0.1); border-radius: var(--r-md); font-size:15px; color:var(--ink); transition: all 280ms var(--ease-soft); box-sizing:border-box; }
+  .field:focus { outline:none; border-color: var(--pink-300); box-shadow: 0 0 0 4px rgba(255,182,200,0.3); }
+  .field::placeholder { color: var(--ink-3); }
+  textarea.field { font-family: var(--font-hand); font-size:18px; resize:none; min-height:80px; }
+  .label { font-family:var(--font-sans); font-weight:600; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color: var(--fg-muted); margin-bottom:8px; display:block; }
+</style>
+</head>
+<body style="padding:24px;">
+  <div style="max-width:480px;">
+    <label class="label">your name · tên của bạn</label>
+    <input class="field" placeholder="Mai" value="">
+    <div style="height:14px;"></div>
+    <label class="label">a wish for Bi</label>
+    <textarea class="field" placeholder="congrats Bi ơi, love you so much 💖"></textarea>
+  </div>
+</body></html>

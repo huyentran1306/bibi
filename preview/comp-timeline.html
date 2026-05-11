@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { background: var(--paper); }
+  .item { display:flex; gap:18px; align-items:flex-start; }
+  .stub { width:8px; background: linear-gradient(180deg, var(--pink-300), var(--lav-300)); border-radius:9999px; }
+  .dot-bullet { width:36px; height:36px; border-radius:9999px; background:#fff; box-shadow: var(--shadow-soft); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid var(--pink-200); }
+  .body-text { flex:1; }
+  .yr { font-family:var(--font-hand); font-size:22px; color:var(--ink); }
+  .ttl { font-family:var(--font-sans); font-weight:600; font-size:15px; color:var(--ink); margin-top:2px; }
+  .desc { font-size:13px; color:var(--ink-2); line-height:1.5; margin-top:2px; }
+</style>
+</head>
+<body style="padding:24px;">
+  <div class="label-eyebrow" style="margin-bottom:14px;">Timeline item</div>
+  <div style="display:flex; flex-direction:column; gap:18px; position:relative;">
+    <div style="position:absolute; left:17px; top:36px; bottom:36px; width:2px; background: repeating-linear-gradient(180deg, var(--pink-200) 0 4px, transparent 4px 8px);"></div>
+    <div class="item"><div class="dot-bullet">🌱</div><div class="body-text"><div class="yr">year 1 · 2021</div><div class="ttl">freshman me, no clue what's a derivative</div></div></div>
+    <div class="item"><div class="dot-bullet" style="border-color:var(--lav-200);">📚</div><div class="body-text"><div class="yr">year 2 · sleepless era</div><div class="ttl">3am deadlines, redbull diet, group chat panic</div></div></div>
+    <div class="item"><div class="dot-bullet" style="border-color:var(--blue-200);">💼</div><div class="body-text"><div class="yr">year 3 · internship</div><div class="ttl">first paycheck went to bubble tea, no regrets</div></div></div>
+  </div>
+</body></html>

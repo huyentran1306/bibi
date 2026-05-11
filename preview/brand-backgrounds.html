@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { background: var(--paper); }
+  .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+  .bg { height:120px; border-radius: var(--r-md); position:relative; overflow:hidden; }
+  .bg1 { background: radial-gradient(circle at 20% 30%, var(--pink-200), transparent 50%), radial-gradient(circle at 80% 70%, var(--lav-200), transparent 55%), var(--paper); }
+  .bg2 { background: linear-gradient(180deg, var(--blue-100) 0%, var(--cream-100) 100%); }
+  .bg3 { background: var(--paper); background-image: radial-gradient(circle, rgba(75,46,92,0.05) 1px, transparent 1.5px); background-size: 16px 16px; }
+  .lab { position:absolute; bottom:8px; left:10px; font-size:11px; font-weight:600; color: var(--ink-2); background: rgba(255,255,255,0.7); padding:3px 8px; border-radius:9999px; }
+</style>
+</head>
+<body style="padding:24px;">
+  <div class="label-eyebrow" style="margin-bottom:14px;">Background treatments</div>
+  <div class="grid">
+    <div class="bg bg1"><span class="lab">soft glows</span></div>
+    <div class="bg bg2"><span class="lab">linear pastel</span></div>
+    <div class="bg bg3"><span class="lab">dot grid · paper</span></div>
+  </div>
+</body></html>

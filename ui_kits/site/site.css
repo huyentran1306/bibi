@@ -1,0 +1,107 @@
+/* Site-specific styles — composes design tokens with section layout */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; overflow-x: hidden; }
+
+/* Decorative paper grain */
+.app {
+  background: var(--paper);
+  background-image: radial-gradient(circle, rgba(75,46,92,0.035) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+  position: relative;
+  min-height: 100vh;
+}
+
+.section {
+  position: relative;
+  padding: 96px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media (max-width: 720px) { .section { padding: 64px 20px; } }
+
+.section-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 6vw, 80px);
+  line-height: 1.0;
+  color: var(--ink);
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+.section-sub {
+  font-family: var(--font-hand);
+  font-size: clamp(20px, 2.2vw, 26px);
+  color: var(--ink-2);
+  text-align: center;
+  margin: 0 0 56px;
+}
+
+/* Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Buttons */
+.btn { font-family: var(--font-sans); font-weight: 600; border: none; cursor: pointer; transition: all 280ms var(--ease-bounce); display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.btn-primary { background: var(--pink-300); color: #fff; padding: 16px 30px; font-size: 17px; border-radius: var(--r-full); box-shadow: var(--shadow-glow-pk), var(--inner-glow); }
+.btn-primary:hover { transform: translateY(-3px) rotate(-1.5deg); box-shadow: 0 18px 50px rgba(255,149,176,0.55), var(--inner-glow); }
+.btn-primary:active { transform: translateY(0) scale(0.97); }
+.btn-secondary { background: var(--bg-glass); color: var(--ink); padding: 12px 22px; font-size: 15px; border-radius: var(--r-full); border: 1px solid rgba(75,46,92,0.1); backdrop-filter: blur(12px); }
+.btn-secondary:hover { background: rgba(255,255,255,0.85); transform: translateY(-2px); }
+
+/* Glass card base */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lift), var(--inner-glow);
+}
+
+/* Floats */
+@keyframes float-a {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(6deg); }
+}
+@keyframes float-b {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-8deg); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+@keyframes drift-x {
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(20px); }
+}
+
+.float-a { animation: float-a 5s var(--ease-bounce) infinite; }
+.float-b { animation: float-b 6s var(--ease-bounce) infinite; }
+.twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+
+/* Dark mode tweaks */
+:root[data-theme="dark"] .app {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1.5px);
+}
+:root[data-theme="dark"] .btn-secondary { background: rgba(255,255,255,0.08); color: var(--ink); border-color: rgba(255,255,255,0.15); }

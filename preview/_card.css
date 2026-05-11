@@ -1,0 +1,12 @@
+/* Shared frame for design-system preview cards */
+@import url('./colors_and_type.css');
+
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--fg); }
+body { padding: 24px; box-sizing: border-box; min-height: 100vh; }
+.card-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.card-col { display: flex; flex-direction: column; gap: 12px; }
+.swatch { width: 100%; height: 88px; border-radius: var(--r-md); position: relative; box-shadow: var(--inner-glow); }
+.swatch-label { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; font-size: 12px; }
+.swatch-name { font-weight: 600; color: var(--fg); }
+.swatch-val { font-family: ui-monospace, 'SF Mono', Menlo, monospace; color: var(--fg-muted); font-size: 11px; }
+.label-eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-muted); font-weight: 600; }

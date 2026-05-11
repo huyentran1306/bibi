@@ -1,0 +1,157 @@
+// Messages.jsx — Vietnamese friend wishes
+const { useState: useStateMsg, useEffect: useEffectMsg } = React;
+
+const SEED_MESSAGES = [
+  { from: 'Mai',  color: 'pink',  note: 'Bi ơi, chúc mừng nhaa! cảm ơn vì mọi lần học chung tới 3 giờ sáng, mọi cái ôm trước buổi thuyết trình. yêu cậu lắm luôn 💖' },
+  { from: 'Linh', color: 'lav',   note: 'mình đã làm được rồi nè 🥹 bốn năm trôi qua nhanh thật — cứ giữ năng lượng rực rỡ, mạnh mẽ, "chiến deadline" như xưa nha bạn.' },
+  { from: 'An',   color: 'blue',  note: 'từ năm 1 đến giờ, em vẫn nhớ lần chị giúp em qua môn Kinh tế vĩ mô. mãi biết ơn chị nhiều lắm 💌' },
+  { from: 'Hà',   color: 'cream', note: 'cảm ơn vì đã là đồng đội của tớ trong MỌI bài tập nhóm. sau này ai sẽ nghe tớ than Excel đây trời ơi 😭' },
+  { from: 'Khoa', color: 'mint',  note: 'chúc mừng Bibi nhaa! đường rộng mở phía trước, mong cậu mãi giữ được nụ cười rạng rỡ như hôm tốt nghiệp 🌷' },
+  { from: 'Trinh',color: 'pink',  note: 'cậu chính là lý do tớ qua được môn Thống kê. bạn thân đỉnh nhất quả đất. giờ thì ra chinh phục thế giới ngân hàng đi 💼✨' },
+];
+
+const COLOR_MAP = {
+  pink:  { bg: 'var(--pink-100)',  accent: 'var(--pink-300)',  tape: 'var(--lav-200)' },
+  lav:   { bg: 'var(--lav-100)',   accent: 'var(--lav-300)',   tape: 'var(--blue-200)' },
+  blue:  { bg: 'var(--blue-100)',  accent: 'var(--blue-300)',  tape: 'var(--cream-200)'},
+  cream: { bg: 'var(--cream-100)', accent: 'var(--cream-300)', tape: 'var(--pink-200)' },
+  mint:  { bg: 'var(--mint)',      accent: '#6FCFA6',          tape: 'var(--pink-200)' },
+};
+
+function MessageCard({ m, i }) {
+  const c = COLOR_MAP[m.color] || COLOR_MAP.pink;
+  return (
+    <div className="reveal" style={{
+      position: 'relative',
+      background: c.bg,
+      padding: '28px 26px 22px',
+      borderRadius: 'var(--r-lg)',
+      boxShadow: 'var(--shadow-soft)',
+      transition: 'all 400ms var(--ease-bounce)',
+      transitionDelay: `${i * 50}ms`,
+      cursor: 'default',
+      transform: `rotate(${(i % 2 === 0 ? -1 : 1) * 0.8}deg)`,
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.transform = 'rotate(0deg) translateY(-6px)';
+      e.currentTarget.style.boxShadow = '0 18px 40px rgba(75,46,92,0.14), 0 6px 20px rgba(255,182,200,0.4)';
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.transform = `rotate(${(i % 2 === 0 ? -1 : 1) * 0.8}deg)`;
+      e.currentTarget.style.boxShadow = 'var(--shadow-soft)';
+    }}>
+      <div style={{
+        position: 'absolute', top: -10, right: 20,
+        width: 70, height: 16, background: c.tape, opacity: 0.7, borderRadius: 2,
+        transform: 'rotate(6deg)',
+      }}/>
+      <div style={{
+        fontFamily: 'var(--font-hand)',
+        fontSize: 21,
+        color: 'var(--ink)',
+        lineHeight: 1.45,
+      }}>
+        {m.note}
+      </div>
+      <div style={{
+        marginTop: 18,
+        display: 'flex', alignItems: 'center', gap: 10,
+      }}>
+        <div style={{
+          width: 30, height: 30, borderRadius: 9999, background: c.accent, color: '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 13,
+        }}>{m.from[0]}</div>
+        <div style={{
+          fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--ink)',
+        }}>— {m.from}</div>
+      </div>
+    </div>
+  );
+}
+
+function AddMessageCard({ onAdd, visitorName }) {
+  const [open, setOpen] = useStateMsg(false);
+  const [name, setName] = useStateMsg(visitorName || '');
+  const [note, setNote] = useStateMsg('');
+  const colors = ['pink', 'lav', 'blue', 'cream', 'mint'];
+
+  useEffectMsg(() => {
+    if (visitorName && !name) setName(visitorName);
+  }, [visitorName]);
+
+  const submit = () => {
+    if (!name.trim() || !note.trim()) return;
+    onAdd({ from: name.trim(), note: note.trim(), color: colors[Math.floor(Math.random() * colors.length)] });
+    setNote(''); setOpen(false);
+  };
+
+  if (!open) {
+    return (
+      <button onClick={() => setOpen(true)} className="reveal" style={{
+        background: 'rgba(255,255,255,0.5)',
+        border: '2px dashed rgba(75,46,92,0.2)',
+        borderRadius: 'var(--r-lg)',
+        padding: '40px 26px',
+        cursor: 'pointer',
+        fontFamily: 'var(--font-hand)',
+        fontSize: 22,
+        color: 'var(--ink-2)',
+        transition: 'all 280ms var(--ease-bounce)',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.75)'; e.currentTarget.style.transform='translateY(-4px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.5)'; e.currentTarget.style.transform='translateY(0)'; }}>
+        + gửi lời chúc cho Bi
+        <div style={{ fontSize: 14, marginTop: 6, color: 'var(--ink-3)' }}>lời nhắn của bạn sẽ ở đây mãi mãi 💌</div>
+      </button>
+    );
+  }
+
+  return (
+    <div className="glass" style={{ padding: 22 }}>
+      <div className="ds-label" style={{ marginBottom: 8 }}>tên của bạn</div>
+      <input value={name} onChange={e => setName(e.target.value)} placeholder="Mai"
+             style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', border: '1.5px solid rgba(75,46,92,0.12)', fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--ink)', background: 'rgba(255,255,255,0.8)', boxSizing: 'border-box' }}/>
+      <div className="ds-label" style={{ margin: '12px 0 8px' }}>lời chúc của bạn</div>
+      <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="chúc mừng Bi nhaa, yêu nhiều lắm 💖"
+                style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', border: '1.5px solid rgba(75,46,92,0.12)', fontFamily: 'var(--font-hand)', fontSize: 19, color: 'var(--ink)', background: 'rgba(255,255,255,0.8)', minHeight: 90, resize: 'none', boxSizing: 'border-box' }}/>
+      <div style={{ display: 'flex', gap: 10, marginTop: 14, justifyContent: 'flex-end' }}>
+        <button onClick={() => setOpen(false)} className="btn btn-secondary">hủy</button>
+        <button onClick={submit} className="btn btn-primary">gửi 💌</button>
+      </div>
+    </div>
+  );
+}
+
+function Messages({ visitorName }) {
+  const [list, setList] = useStateMsg(() => {
+    try { return JSON.parse(localStorage.getItem('bi_msgs') || 'null') || SEED_MESSAGES; }
+    catch { return SEED_MESSAGES; }
+  });
+  useEffectMsg(() => {
+    try { localStorage.setItem('bi_msgs', JSON.stringify(list)); } catch {}
+  }, [list]);
+
+  return (
+    <section className="section" id="messages" style={{ position: 'relative' }}>
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 0,
+        background: 'radial-gradient(circle at 90% 10%, rgba(212,181,255,0.25), transparent 50%)' }}/>
+      <div style={{ position: 'relative' }}>
+        <div className="section-eyebrow reveal">phần 03</div>
+        <h2 className="section-title reveal">lời chúc từ những người thương 💌</h2>
+        <p className="section-sub reveal">di chuột vào thiệp để thấy nó "đứng dậy" nha</p>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 22,
+        }}>
+          {list.map((m, i) => <MessageCard m={m} i={i} key={i}/>)}
+          <AddMessageCard onAdd={msg => setList(l => [msg, ...l])} visitorName={visitorName}/>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+window.Messages = Messages;
