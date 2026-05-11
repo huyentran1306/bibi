@@ -62,7 +62,7 @@ export default function Hero({ visitorName }: HeroProps) {
           lineHeight: 1.4,
         }}>
           {visitorName
-            ? `"${visitorName} ơi, cảm ơn bạn vì đã là một phần của hành trình 4 năm này — những đêm thức trắng, những lần khóc cười cùng nhau, mình sẽ không bao giờ quên 💖"`
+            ? `"${visitorName} ơi, cảm ơn bạn vì luôn ở bên cạnh Bi trong hành trình này. Dù là đêm thức trắng hay những lần khóc cười, bạn là một phần không thể thiếu — mình sẽ không bao giờ quên 💖"`
             : '"Mình bước vào trường khi còn chưa biết in tài liệu thế nào, và rời đi như một đứa đã sống sót qua biết bao kỳ thi cuối — cảm ơn vì 4 năm đẹp nhất đời 🥹💖"'}
         </p>
 
