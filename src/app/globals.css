@@ -61,7 +61,7 @@
   --font-hand:    'Quicksand', system-ui, sans-serif;
 
   /* ---------- Type scale ---------- */
-  --t-hero:    clamp(48px, 9vw, 120px);
+  --t-hero:    clamp(32px, 9vw, 120px);
   --t-display: clamp(40px, 6vw, 72px);
   --t-h1:      clamp(32px, 4.5vw, 56px);
   --t-h2:      clamp(24px, 3vw, 36px);
@@ -144,8 +144,8 @@ body {
 .ds-h2      { font-family: var(--font-sans); font-weight: 700; font-size: var(--t-h2); line-height: 1.2; }
 .ds-h3      { font-family: var(--font-sans); font-weight: 600; font-size: var(--t-h3); line-height: 1.3; }
 .ds-body    { font-family: var(--font-sans); font-weight: 400; font-size: var(--t-body); line-height: 1.6; color: var(--fg-soft); }
-.ds-hand    { font-family: var(--font-sans); font-weight: 500; font-size: 22px; line-height: 1.3; color: var(--fg); }
-.ds-caption { font-family: var(--font-sans); font-weight: 500; font-size: 18px; color: var(--fg-soft); line-height: 1.3; }
+.ds-hand    { font-family: var(--font-sans); font-weight: 500; font-size: clamp(16px, 4vw, 22px); line-height: 1.3; color: var(--fg); }
+.ds-caption { font-family: var(--font-sans); font-weight: 500; font-size: clamp(14px, 3.5vw, 18px); color: var(--fg-soft); line-height: 1.3; }
 .ds-label   { font-family: var(--font-sans); font-weight: 600; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-muted); }
 
 /* ============================================================
@@ -186,7 +186,7 @@ body {
 .section-title {
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: clamp(44px, 6vw, 80px);
+  font-size: clamp(28px, 7vw, 80px);
   line-height: 1.0;
   color: var(--ink);
   text-align: center;
@@ -196,7 +196,7 @@ body {
 .section-sub {
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: clamp(20px, 2.2vw, 26px);
+  font-size: clamp(15px, 4vw, 26px);
   color: var(--ink-2);
   text-align: center;
   margin: 0 0 56px;

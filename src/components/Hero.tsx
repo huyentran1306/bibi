@@ -26,7 +26,7 @@ export default function Hero({ visitorName }: HeroProps) {
 
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(64px, 13vw, 168px)',
+          fontSize: 'clamp(36px, 11vw, 168px)',
           color: 'var(--ink)',
           lineHeight: 0.92,
           margin: 0,
@@ -55,7 +55,7 @@ export default function Hero({ visitorName }: HeroProps) {
 
         <p style={{
           fontFamily: 'var(--font-hand)',
-          fontSize: 'clamp(22px, 2.6vw, 30px)',
+          fontSize: 'clamp(15px, 4vw, 30px)',
           color: 'var(--ink-2)',
           maxWidth: 640,
           margin: '38px auto 0',
