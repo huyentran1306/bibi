@@ -9,7 +9,7 @@ const STATUS = {
 
 type StatusKey = keyof typeof STATUS;
 
-interface RsvpEntry { name: string; note: string; status: StatusKey; at: number; }
+interface RsvpEntry { id?: number; name: string; note: string; status: StatusKey; created_at?: number; }
 
 function RsvpCard({ r, i }: { r: RsvpEntry; i: number }) {
   const s = STATUS[r.status] || STATUS.maybe;
@@ -29,7 +29,7 @@ function RsvpCard({ r, i }: { r: RsvpEntry; i: number }) {
       }}>{(r.name[0] || '?').toUpperCase()}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 15, color: 'var(--ink)' }}>{r.name}</div>
-        {r.note && <div style={{ fontFamily: 'var(--font-hand)', fontSize: 17, color: 'var(--ink-2)', lineHeight: 1.3, marginTop: 2 }}>{r.note}</div>}
+        {r.note && <div style={{ fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.3, marginTop: 2 }}>{r.note}</div>}
       </div>
       <div style={{
         display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -74,30 +74,45 @@ function StatusPicker({ value, onChange }: { value: StatusKey; onChange: (v: Sta
 interface RSVPProps { visitorName: string | null; }
 
 export default function RSVP({ visitorName }: RSVPProps) {
-  const [list, setList] = useState<RsvpEntry[]>(() => {
-    try { return JSON.parse(localStorage.getItem('bi_rsvp') || 'null') || []; }
-    catch { return []; }
-  });
+  const [list, setList] = useState<RsvpEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [name, setName] = useState(visitorName || '');
   const [note, setNote] = useState('');
   const [status, setStatus] = useState<StatusKey>('yes');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (visitorName && !name) setName(visitorName);
   }, [visitorName]);
 
   useEffect(() => {
-    try { localStorage.setItem('bi_rsvp', JSON.stringify(list)); } catch {}
-  }, [list]);
+    fetch('/api/rsvp')
+      .then(r => r.json())
+      .then((d: { ok: boolean; data: RsvpEntry[] }) => { if (d.ok) setList(d.data); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  const submit = (e?: React.FormEvent) => {
+  const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!name.trim()) return;
-    setList(l => [{ name: name.trim(), note: note.trim(), status, at: Date.now() }, ...l]);
-    setNote(''); setStatus('yes');
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2400);
+    if (!name.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), note: note.trim(), status }),
+      });
+      const data = await res.json();
+      if (data.ok && data.data) {
+        setList(l => [data.data, ...l]);
+        setNote(''); setStatus('yes');
+        setSubmitted(true);
+        setTimeout(() => setSubmitted(false), 2400);
+      }
+    } catch {}
+    finally { setSubmitting(false); }
   };
 
   const counts = list.reduce((a: Record<string, number>, r) => (a[r.status] = (a[r.status] || 0) + 1, a), {});
@@ -136,9 +151,11 @@ export default function RSVP({ visitorName }: RSVPProps) {
                       style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', border: '1.5px solid rgba(75,46,92,0.12)', fontFamily: 'var(--font-hand)', fontSize: 19, color: 'var(--ink)', background: 'rgba(255,255,255,0.85)', minHeight: 80, resize: 'none', boxSizing: 'border-box', outline: 'none' }}/>
 
             <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-              <button type="submit" className="btn btn-primary">Gửi xác nhận <span style={{ fontSize: 18 }}>→</span></button>
+              <button type="submit" className="btn btn-primary" disabled={submitting}>
+                {submitting ? 'Đang gửi...' : 'Gửi xác nhận'} <span style={{ fontSize: 18 }}>→</span>
+              </button>
               {submitted && (
-                <span style={{ fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--pink-400)' }}>
+                <span style={{ fontFamily: 'var(--font-sans)', fontSize: 16, color: 'var(--pink-400)' }}>
                   Đã lưu! Cảm ơn bạn nhiều ✿
                 </span>
               )}
@@ -154,7 +171,7 @@ export default function RSVP({ visitorName }: RSVPProps) {
               border: '1px solid rgba(75,46,92,0.08)',
             }}>
               <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--ink-2)' }}>
-                <b style={{ color: 'var(--ink)', fontSize: 18, fontFamily: 'var(--font-display)' }}>{list.length}</b> lượt phản hồi
+                <b style={{ color: 'var(--ink)', fontSize: 18, fontFamily: 'var(--font-sans)', fontWeight: 700 }}>{list.length}</b> lượt phản hồi
               </div>
               <div style={{ flex: 1 }}/>
               <div style={{ display: 'flex', gap: 10, fontFamily: 'var(--font-sans)', fontSize: 12, color: 'var(--ink-2)' }}>
@@ -164,17 +181,21 @@ export default function RSVP({ visitorName }: RSVPProps) {
               </div>
             </div>
 
-            {list.length === 0 ? (
+            {loading ? (
+              <div style={{ padding: '30px 24px', textAlign: 'center', fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--ink-3)' }}>
+                Đang tải...
+              </div>
+            ) : list.length === 0 ? (
               <div style={{
                 padding: '40px 24px', textAlign: 'center',
-                fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--ink-3)',
+                fontFamily: 'var(--font-sans)', fontSize: 16, color: 'var(--ink-3)',
                 background: 'rgba(255,255,255,0.4)',
                 border: '2px dashed rgba(75,46,92,0.15)',
                 borderRadius: 'var(--r-md)',
               }}>
                 Chưa ai phản hồi á — bạn là người đầu tiên nha 🌷
               </div>
-            ) : list.map((r, i) => <RsvpCard r={r} i={i} key={r.at + '-' + i}/>)}
+            ) : list.map((r, i) => <RsvpCard r={r} i={i} key={r.id ?? i}/>)}
           </div>
         </div>
       </div>

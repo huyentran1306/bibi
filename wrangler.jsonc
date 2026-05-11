@@ -10,6 +10,13 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bibi-db",
+      "database_id": "129ce2b2-bbd7-4811-8b82-96e4a9641617"
+    }
+  ],
   "observability": {
     "enabled": true
   }

@@ -18,7 +18,7 @@ const COLOR_MAP: Record<string, { bg: string; accent: string; tape: string }> = 
   mint:  { bg: 'var(--mint)',      accent: '#6FCFA6',          tape: 'var(--pink-200)' },
 };
 
-interface Message { from: string; note: string; color: string; }
+interface Message { id?: number; from: string; note: string; color: string; created_at?: number; }
 
 function MessageCard({ m, i }: { m: Message; i: number }) {
   const c = COLOR_MAP[m.color] || COLOR_MAP.pink;
@@ -47,7 +47,7 @@ function MessageCard({ m, i }: { m: Message; i: number }) {
         width: 70, height: 16, background: c.tape, opacity: 0.7, borderRadius: 2,
         transform: 'rotate(6deg)',
       }}/>
-      <div style={{ fontFamily: 'var(--font-hand)', fontSize: 21, color: 'var(--ink)', lineHeight: 1.45 }}>
+      <div style={{ fontFamily: 'var(--font-sans)', fontSize: 17, color: 'var(--ink)', lineHeight: 1.5 }}>
         {m.note}
       </div>
       <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -56,7 +56,7 @@ function MessageCard({ m, i }: { m: Message; i: number }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 13,
         }}>{m.from[0]}</div>
-        <div style={{ fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--ink)' }}>— {m.from}</div>
+        <div style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>— {m.from}</div>
       </div>
     </div>
   );
@@ -86,8 +86,8 @@ function AddMessageCard({ onAdd, visitorName }: { onAdd: (m: Message) => void; v
         borderRadius: 'var(--r-lg)',
         padding: '40px 26px',
         cursor: 'pointer',
-        fontFamily: 'var(--font-hand)',
-        fontSize: 22,
+        fontFamily: 'var(--font-sans)',
+        fontSize: 16,
         color: 'var(--ink-2)',
         transition: 'all 280ms var(--ease-bounce)',
       }}
@@ -106,7 +106,7 @@ function AddMessageCard({ onAdd, visitorName }: { onAdd: (m: Message) => void; v
              style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', border: '1.5px solid rgba(75,46,92,0.12)', fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--ink)', background: 'rgba(255,255,255,0.8)', boxSizing: 'border-box' }}/>
       <div className="ds-label" style={{ margin: '12px 0 8px' }}>Lời chúc của bạn</div>
       <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="Chúc mừng Bi nhaa, yêu nhiều lắm 💖"
-                style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', border: '1.5px solid rgba(75,46,92,0.12)', fontFamily: 'var(--font-hand)', fontSize: 19, color: 'var(--ink)', background: 'rgba(255,255,255,0.8)', minHeight: 90, resize: 'none', boxSizing: 'border-box' }}/>
+                style={{ width: '100%', padding: '12px 16px', borderRadius: 'var(--r-md)', border: '1.5px solid rgba(75,46,92,0.12)', fontFamily: 'var(--font-sans)', fontSize: 16, color: 'var(--ink)', background: 'rgba(255,255,255,0.8)', minHeight: 90, resize: 'none', boxSizing: 'border-box' }}/>
       <div style={{ display: 'flex', gap: 10, marginTop: 14, justifyContent: 'flex-end' }}>
         <button onClick={() => setOpen(false)} className="btn btn-secondary">Hủy</button>
         <button onClick={submit} className="btn btn-primary">Gửi 💌</button>
@@ -118,14 +118,39 @@ function AddMessageCard({ onAdd, visitorName }: { onAdd: (m: Message) => void; v
 interface MessagesProps { visitorName: string | null; }
 
 export default function Messages({ visitorName }: MessagesProps) {
-  const [list, setList] = useState<Message[]>(() => {
-    try { return JSON.parse(localStorage.getItem('bi_msgs') || 'null') || SEED_MESSAGES; }
-    catch { return SEED_MESSAGES; }
-  });
+  const [list, setList] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try { localStorage.setItem('bi_msgs', JSON.stringify(list)); } catch {}
-  }, [list]);
+    fetch('/api/messages')
+      .then(r => r.json())
+      .then((d: { ok: boolean; data: Message[] }) => {
+        if (d.ok) setList(d.data.map(m => ({ ...m, from: m.from ?? (m as unknown as { name?: string }).name ?? '' })));
+      })
+      .catch(() => { setList(SEED_MESSAGES); })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleAdd = async (msg: Message) => {
+    const colors = ['pink', 'lav', 'blue', 'cream', 'mint'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: msg.from, note: msg.note, color }),
+      });
+      const data = await res.json();
+      if (data.ok && data.data) {
+        const row = data.data as { id: number; name: string; note: string; color: string; created_at: number };
+        setList(l => [...l, { id: row.id, from: row.name, note: row.note, color: row.color, created_at: row.created_at }]);
+      } else {
+        setList(l => [...l, { ...msg, color }]);
+      }
+    } catch {
+      setList(l => [...l, { ...msg, color }]);
+    }
+  };
 
   return (
     <section className="section" id="messages" style={{ position: 'relative' }}>
@@ -143,8 +168,12 @@ export default function Messages({ visitorName }: MessagesProps) {
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: 22,
         }}>
-          {list.map((m, i) => <MessageCard m={m} i={i} key={i}/>)}
-          <AddMessageCard onAdd={msg => setList(l => [msg, ...l])} visitorName={visitorName}/>
+          {loading ? (
+            <div style={{ gridColumn: '1 / -1', padding: '30px 24px', textAlign: 'center', fontFamily: 'var(--font-sans)', fontSize: 15, color: 'var(--ink-3)' }}>
+              Đang tải lời chúc...
+            </div>
+          ) : list.map((m, i) => <MessageCard m={m} i={i} key={m.id ?? i}/>)}
+          <AddMessageCard onAdd={handleAdd} visitorName={visitorName}/>
         </div>
       </div>
     </section>
